@@ -1,4 +1,4 @@
-# dataset containing peoples height and weight In ireland during 2018 will be analysed.
+# dataset containing population height and weight In ireland during 2018 will be analysed.
 # To compensate for the influence of height
 # on weight, Body Mass Index (BMI) was introduced that can be
 # calculated as:BMI = weight/height^2
@@ -21,13 +21,14 @@ BMI = function(Height, Weight){
 # testimg bmi function
 BMI(71,180)
 
-# adding bmi column in dataframe
+# adding bmi column t our dataframe
 Height_Weight_Data$bmi = BMI(Height_Weight_Data$Height,Height_Weight_Data$Weight)
 BMI_Data <- Height_Weight_Data
 BMI_Data
 
 
 # Creating a derived variable for the respondents age in 2019 based on the reported birth year.
+# creating age column from date of birth 
 
 BMI_Data$age <- (2019 - BMI_Data$birth_yr)
 BMI_Data
@@ -39,6 +40,8 @@ table(Gender)
 
 table(Gender, age)
 
+# plot to check the linearity 
+
 scatter.smooth(x=BMI_Data$Height, y=BMI_Data$bmi, main="Height ~ Weight")  # scatterplot
 scatter.smooth(x=BMI_Data$Height, y=BMI_Data$age, main="Height ~ bmi")  # scatterplot
 
@@ -48,15 +51,15 @@ scatter.smooth(x=BMI_Data$Height, y=BMI_Data$age, main="Height ~ bmi")  # scatte
 highWeight <- Weight > mean(Weight)
 ftable(Gender, age, highWeight)
 
-  # Numerical variables and summary statistics
+# Numerical variables and summary statistics
   
 mean(Weight)
 mean(Height)
 c(sd(Weight), sd(Height))
-  
+    
 (V <- var(cbind(Weight, Height)))
 cor(Weight, Height)
-  
+    
 my.cor <- V[1, 2]/(sd(Weight) * sd(Height))
 cat("Correlation r =", my.cor, "\n")
 
@@ -114,7 +117,7 @@ lapply(byFit, abline, lwd = 4)
 sapply(byFit, function(x) x$coefficients)
 
 
-# Gender and age effects on height and weight 
+# Gender and age effects on height and weight regresion model 
 summary(aov(Height ~ Gender + age))
 summary(aov(Weight ~ Gender * age))
 
@@ -143,7 +146,20 @@ pValue <- round(tweight$p.value, 3)
 cat("p-value ( p =", pValue,")\n")
 
 #############################
-# capture model summary as an object Gender and age effects on height and weight 
+
+# Residuals - Provide a quick view of the distribution of the residuals, which by definition have a mean zero. 
+# Coefficients - shows the regression beta coefficients and their statistical significance. 
+# Predictor variables that are significantly associated to the outcome variable, are marked by stars.
+# Residual standard error (RSE), R-squared (R2) and the F-statistic are metrics that 
+# are used to check how well the model fits to our data.
+# the estimates of the beta coefficients
+# the standard errors (SE), which defines the accuracy of beta coefficients. 
+# For a given beta coefficient, the SE reflects how the coefficient varies under 
+# repeated sampling. It can be used to compute the confidence intervals and the t-statistic.
+# the t-statistic and the associated p-value, which defines the statistical significance of the beta coefficients.
+# summary shows that the prediction equation for height
+
+# capturing model summary as an object Gender and age effects on height and weight 
 modelSummary <- summary(lmfit)  
 
 # model coefficients
@@ -265,6 +281,13 @@ BIC(lmfit)
 
 
 # corelation between BMI,height and weight
+# The correlation coefficient measures the level of the association between two variables 
+# Its value ranges between -1 (perfect negative correlation: x increases, y decreases) 
+# and +1 (perfect positive correlation: when x increases, y increases).
+# A value closer to 0 suggests a weak relationship between the variables. A low 
+# correlation (-0.2 < x < 0.2) probably suggests that much of variation of the outcome 
+# variable (y) is not explained by the predictor (x). 
+# In such case, we should probably look for better predictor variables.
 X <- subset(BMI_Data, selec = c(Weight, Height, bmi))
 X
 col <- c("red", "blue")[Gender]
